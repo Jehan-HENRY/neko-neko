@@ -1,0 +1,17 @@
+{
+  "name": "neko-neko",
+  "version": "1.0.0",
+  "description": "Chat app with socket.io and no DB",
+  "author": "First Last <jhenry@profideo.com>",
+  "scripts": {
+    "client": "cd server/app/client && npm start",
+    "server": "cd server && nodemon index.js",
+    "start": "concurrently --kill-others \"npm run server\" \"npm run client\"",
+    "client-install": "cd server/app/client && npm install",
+    "server-install": "cd server && npm install",
+    "install-all-deps": "concurrently \"npm run server-install\" \"npm run client-install\""
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
