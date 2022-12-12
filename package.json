@@ -1,9 +1,12 @@
 {
   "name": "server",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Node.js and express on Docker",
+  "author": "J HENRY <jhenry@profideo.com>",
   "main": "server/index.js",
   "scripts": {
-    "start": "nodemon /server/index.js"
+    "start": "nodemon server/index.js"
   },
   "dependencies": {
     "body-parser": "^1.20.1",

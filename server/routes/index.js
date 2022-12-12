@@ -3,14 +3,13 @@ const express = require("express"),
   path = require("path"),
   pjsonGlobal = require("../../package.json");
 
-router.use("/version", (_, res) => {
-  console.log(`test`, res);
-  res.status(200).json({ version: pjsonGlobal.version });
+router.get("/version", (_, res) => {
+  res.send(`WELCOME TO NeKO nEko API V${pjsonGlobal.version}`);
 });
 
-router.use(express.static(path.join(__dirname, "/../app")));
-router.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "/../app", "index.html"));
+router.use(express.static(path.join(__dirname, "/../client/build")));
+router.get("/*", function (_, res) {
+  res.sendFile(path.join(__dirname, "/../client/build", "index.html"));
 });
 
 module.exports.router = router;

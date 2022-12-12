@@ -5,7 +5,7 @@ const express = require("express"),
   helmet = require("helmet"),
   https = require("https"),
   options = require("./cert"),
-  port = process.env.NODE_PORT || 3000,
+  port = process.env.NODE_PORT || 4000,
   app = express(),
   { socketConnection } = require("./services/socket"),
   urlencodedParser = bodyParser.urlencoded({
@@ -30,7 +30,8 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use("/", routes);
+app.use("/", routes.router);
+
 app.use((_, res) => {
   res.status(404);
 });

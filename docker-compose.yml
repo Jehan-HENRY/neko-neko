@@ -1,15 +1,40 @@
-version: '3.8'
+# version: "3.9"
+
+# services:
+#   app-prod:
+#     container_name: neko_server_${NODE_ENV}
+#     build:
+#       context: .
+#       dockerfile: ./docker/Dockerfile
+#     ports:
+#       - "${APP_PORT}:${APP_PORT}"
+#     volumes:
+#       - .:/server
+#     restart: always
+#     environment:
+#       NODE_ENV: ${NODE_ENV}
+#       APP_PORT: ${APP_PORT}
+
+version: "3.9"
 services:
-  web:
+  server:
     build:
       context: .
-      dockerfile: ./Dockerfile
-      target: dev
+      dockerfile: ./docker/Dockerfile
+    container_name: server_backend
+    ports:
+      - "4000:4000"
     volumes:
-      - .:/src
-    command: npm run start
+      - .:/server
+  client:
+    build:
+      context: .
+      dockerfile: ./server/client/docker/Dockerfile
+    container_name: client_frontend
     ports:
       - "3000:3000"
-    environment:
-      NODE_ENV: development
-      # DEBUG: nodejs-docker-express:*
+    volumes:
+      - ./server/client:/app
+      # - ./app/node_modules
+    stdin_open: true
+    tty: true
