@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -48,6 +49,6 @@
     "redux-devtools-extension": "^2.13.9",
     "tailwindcss": "^3.2.4"
   },
-  "proxy": "https://localhost:4000/api",
+  "proxy": "https://server_backend:4000",
   "homepage": "."
 }
