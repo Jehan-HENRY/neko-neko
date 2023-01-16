@@ -9,7 +9,7 @@ const socket = io();
 
 const Identify = () => {
   const {
-      socket: { me: { id } },
+      socket: { id },
     } = useSelector((state) => state),
     dispatch = useDispatch(),
     navigate = useNavigate(),
@@ -52,7 +52,7 @@ const Identify = () => {
             id="name"
             name="name"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="un truc qui déchire"
+            placeholder="Un truc qui déchire"
             required
             onChange={handleChange}
           />

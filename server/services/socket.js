@@ -26,6 +26,33 @@ const socketConnection = (server) => {
       });
     });
 
+    socket.on("new-message", (data) => {
+      socket.broadcast.emit("new-message", {
+        username: socket.username,
+        dateTime: data.dateTime,
+        message: data.message,
+      });
+    });
+
+    socket.on("typing", (target) => {
+      target
+        ? io
+            .to(target)
+            .emit("typing", { private: true, username: socket.username })
+        : socket.broadcast.emit("typing", {
+            private: false,
+            username: socket.username,
+          });
+    });
+
+    socket.on("stop-typing", (target) => {
+      target
+        ? io.to(target).emit("stop typing", { username: socket.username })
+        : socket.broadcast.emit("stop typing", {
+            username: socket.username,
+          });
+    });
+
     socket.on("disconnect", () => {
       users.splice(users.indexOf({ nickname: socket.nickname }), 1);
       socket.broadcast.emit("user-left", {
