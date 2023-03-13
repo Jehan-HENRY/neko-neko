@@ -1,3 +1,50 @@
 .chat-page {
-  background-color: #d7d3cb;
+  background-color: #f2f2f0;
+}
+
+.hr-lines {
+  position: relative;
+}
+
+.hr-lines:before {
+  content: " ";
+  display: block;
+  height: 1px;
+  width: 250px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background: lightgray;
+}
+
+.hr-lines:after {
+  content: " ";
+  display: block;
+  height: 1px;
+  width: 250px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  background: lightgray;
+}
+
+.message.typing .messageBody {
+  color: gray;
+}
+
+.username {
+  font-weight: 700;
+  overflow: hidden;
+  padding-right: 15px;
+  text-align: right;
+}
+
+.dateTime {
+  margin: 0 18px 0 0;
+  color: gray;
+  font-size: medium;
+}
+
+.custom-margin-left {
+  margin-left: 21rem;
 }

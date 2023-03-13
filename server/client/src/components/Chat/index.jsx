@@ -1,61 +1,72 @@
-import { useState, useEffect } from "react";
+/* eslint-disable no-undef */
+import { useState, useEffect, useContext } from "react";
 import { useSelector } from "react-redux";
+import { SocketContext } from "../../context/socket";
 import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
-import Sidenav from "../Sidenav";
+import { Sidenav, ToggleBtn } from "../";
 import "./Chat.css";
 
-const socket = io();
+const COLORS = [
+  "#e21400",
+  "#91580f",
+  "#f8a700",
+  "#f78b00",
+  "#58dc00",
+  "#287b00",
+  "#a8f07a",
+  "#4ae8c4",
+  "#3b88eb",
+  "#3824aa",
+  "#a700ff",
+  "#d300e7",
+];
 const daysOfWeek = ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"];
 const getDateTime = () => {
-  var today = new Date();
-  var day = daysOfWeek[today.getDay()];
-  var time = today.getHours() + ":" + today.getMinutes();
-  return `${day} ${time}`;
+  const today = new Date();
+  return `${daysOfWeek[today.getDay()]} ${
+    today.getHours() + ":" + today.getMinutes()
+  }`;
 };
 
 const Chat = () => {
-  const {
-      socket: { id },
+  const socket = useContext(SocketContext),
+    [chatTyping, setChatTyping] = useState(false),
+    {
+      sidenav: { isOpen },
+      socket: { id, username },
     } = useSelector((state) => state),
     [typing, setTyping] = useState(""),
-    [messages, setMessages] = useState([]),
+    [messages, setMessages] = useState([
+      <p
+        className="hr-lines leading-relaxed text-center mb-4 mx-2"
+        dangerouslySetInnerHTML={{
+          __html: "Lean back and just enjoy the melodies",
+        }}
+      />,
+    ]),
     navigate = useNavigate(),
-    handleTyping = (e) => setTyping(e.target.value),
+    getUsernameColor = (username) => {
+      var hash = 7;
+      for (var i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + (hash << 5) - hash;
+      }
+      var index = Math.abs(hash % COLORS.length);
+      return COLORS[index];
+    },
+    handleTyping = (e) => {
+      socket.emit("typing");
+      setTyping(e.target.value);
+    },
     handleSubmit = (e) => {
       e.preventDefault();
       socket.emit("new-message", {
-        username: "test",
+        username: username,
         target: "",
         dateTime: getDateTime(),
         message: typing,
       });
       setTyping("");
     },
-    // addMessageElement = (el, options) => {
-    //   var $el = document.getElementById("test");
-    //   // Setup default options
-    //   if (!options) {
-    //     options = {};
-    //   }
-    //   if (typeof options.fade === "undefined") {
-    //     options.fade = true;
-    //   }
-    //   if (typeof options.prepend === "undefined") {
-    //     options.prepend = false;
-    //   }
-
-    //   // Apply options
-    //   if (options.fade) {
-    //     // $el.hide().fadeIn(FADE_TIME);
-    //   }
-    //   if (options.prepend) {
-    //     $messages.prepend($el);
-    //   } else {
-    //     $messages.append($el);
-    //   }
-    //   $messages[0].scrollTop = $messages[0].scrollHeight;
-    // },
     log = (message, options, privateOn = false) => {
       setMessages([...messages, message]);
       // var $el = $("<li>")
@@ -73,83 +84,81 @@ const Chat = () => {
       //   options.fade = false;
       //   $typingMessages.remove();
       // }
+      const usernameDiv = (
+        <span
+          className="username"
+          style={{ color: getUsernameColor(data.username) }}
+          dangerouslySetInnerHTML={{ __html: data.username }}
+        />
+      );
+      const dateTimeDiv = (
+        <span
+          className="dateTime"
+          dangerouslySetInnerHTML={{ __html: data.dateTime }}
+        />
+      );
+      const messageBodyDiv = (
+        <span
+          className="messageBody"
+          dangerouslySetInnerHTML={{ __html: data.message }}
+        />
+      );
 
-      // var $usernameDiv = $('<span class="username"/>')
-      //   .text(data.username)
-      //   .css("color", getUsernameColor(data.username));
-      // var $dateTimeDiv = $('<span class="dateTime">')
-      //   .addClass(privateOn ? "privatDateTime" : "")
-      //   .text(data.dateTime);
-      // var $messageBodyDiv = $('<span class="messageBody">')
-      //   .addClass(privateOn ? "privatMessageBody" : "")
-      //   .text(data.message);
+      const typingClass = data.typing ? "typing" : "";
+      const privatMsg = privateOn ? "privatMsg" : "";
+      const message = (
+        <div className="message m-2">
+          {usernameDiv}
+          {dateTimeDiv}
+          {messageBodyDiv}
+        </div>
+      );
 
-      // var typingClass = data.typing ? "typing" : "";
-      // var privatMsg = privateOn ? "privatMsg" : "";
-      // var message = $('<li class="message"/>')
-      //   .data("username", data.username)
-      //   .addClass(typingClass)
-      //   .addClass(privatMsg)
-      //   .append($usernameDiv, $dateTimeDiv, $messageBodyDiv);
-
-      log(data.message);
+      log(message);
       // privateOn
       //   ? addPrivMsgElement($messageDiv, options)
       //   : addMessageElement($messageDiv, options);
+    },
+    addChatTyping = (data) => {
+      data.typing = true;
+      data.message = "se concentre...";
+      addChatMessage(data.privateOn, data);
     };
 
-  useEffect(() => {
-    console.log("TRIGGER");
-    // connected = true;
-    // $id = data.id;
-    // // Display the welcome message
-    // var $el = $("<li>")
-    //   .addClass("flavour log title")
-    //   .text("Neko neko");
-    // addMessageElement($el, {
-    //   prepend: true
-    // });
-    // var message = "Lean back and just enjoy the melodies";
-    // log(false, message, {
-    //   prepend: true
-    // });
+  socket.on("user-joined", (data) =>
+    log(
+      <p
+        className="hr-lines leading-relaxed text-center mb-4 mx-2"
+        dangerouslySetInnerHTML={{
+          __html: `${data.username} vient de se pointer`,
+        }}
+      />
+    )
+  );
+  socket.on("new-message", (data) => {
+    addChatMessage(false, data);
+    // if ($(".active").text() !== "@Crew") {
+    //   $(`a:contains("@Crew")`).addClass("glow");
+    //   $(".fa-arrow-right").addClass("glow");
+    // }
+  });
+
+  socket.on("typing", (data) => {
+    if (!chatTyping) {
+      setChatTyping(true);
+      addChatTyping(data);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    log("t'es déconnecté");
+  });
+
+  socket.on("user left", (data) => {
+    log(false, data.username + " s'est barré");
     // addParticipantsMessage(data);
     // addParticipantsOnList(data);
-    // var $el = document
-    //   .getElementById("test")
-    //   // .addClass("flavour log title")
-    //   .text("Neko neko");
-    // addMessageElement($el, {
-    //   prepend: true,
-    // });
-    // var message = "Lean back and just enjoy the melodies";
-    // log(false, message, {
-    //   prepend: true,
-    // });
-    log("Lean back and just enjoy the melodies");
-
-    socket.on("disconnect", () => {
-      log("t'es déconnecté");
-    });
-
-    // return () => {
-    //   socket.off("login");
-    // };
-  }, []);
-
-  useEffect(() => {
-    socket.on("user-joined", (data) => {
-      log(`${data.username} vient de se pointer`);
-      // addParticipantsMessage(data);
-      // addParticipantsOnList(data);
-    });
-    socket.on("new-message", (data) => {
-      addChatMessage(false, data);
-      // if ($(".active").text() !== "@Crew") {
-      //   $(`a:contains("@Crew")`).addClass("glow");
-      //   $(".fa-arrow-right").addClass("glow");
-      // }
-    });
+    // removeChatTyping(data);
   });
 
   useEffect(() => {
@@ -157,29 +166,52 @@ const Chat = () => {
   }, [id, navigate]);
 
   return (
-    <div className="chat-page h-screen w-screen flex">
+    <>
       <Sidenav />
-      <div className="h-100 w-100 mx-auto my-10">
-        <ul>
-          <li className="title text-3xl text-slate-700">Neko neko</li>
-          {messages.map((msg, idx) => (
-            <li key={idx} className="text-slate-500">
-              {msg}
-            </li>
-          ))}
-        </ul>
-        {/* Welcome in public chatroom ; id: {id} */}
+      <div
+        className={`absolute inset-y-1/2 z-10 transition-all ease-in-out duration-500 ${
+          isOpen ? "ml-72" : "-ml-4 "
+        }`}
+      >
+        <ToggleBtn />
       </div>
-      <form onSubmit={handleSubmit}>
-        <input
-          onChange={handleTyping}
-          value={typing}
-          id="message"
-          className="absolute inset-x-0 bottom-0 p-2.5 text-md text-gray-900 bg-slate-100 border border-gray-300"
-          placeholder="Dis des trucs..."
-        />
-      </form>
-    </div>
+      <div
+        className={`chat-page flex flex-col h-screen transition-all ease-in-out duration-500 ${
+          isOpen ? "ml-80" : "ml-0"
+        }`}
+      >
+        <h2
+          className={`title my-8 text-5xl text-[#091233] transition-all ease-in-out duration-500 ${
+            isOpen ? "-translate-y-32" : "translate-y-0"
+          }`}
+        >
+          Neko neko
+        </h2>
+        <div className="flex flex-col-reverse h-100 mx-auto overflow-x-hidden w-full">
+          <ul className="container mx-auto text-left mb-16">
+            {messages.map((msg, idx) => (
+              <li key={idx} className="text-slate-700">
+                {msg}
+              </li>
+            ))}
+          </ul>
+          {/* Welcome in public chatroom ; id: {id} */}
+        </div>
+        <form onSubmit={handleSubmit}>
+          <input
+            onChange={handleTyping}
+            value={typing}
+            id="message"
+            autoFocus
+            autoComplete="off"
+            className={`absolute inset-x-0 mx-5 bottom-2.5 p-2.5 text-md text-gray-900 bg-slate-100 border border-gray-300 transition-all ease-in-out duration-500${
+              isOpen ? " custom-margin-left" : ""
+            }`}
+            placeholder="Dis des trucs..."
+          />
+        </form>
+      </div>
+    </>
   );
 };
 

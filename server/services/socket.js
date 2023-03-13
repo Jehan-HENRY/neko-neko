@@ -1,4 +1,3 @@
-let io;
 const users = [];
 
 const socketConnection = (server) => {
@@ -6,28 +5,25 @@ const socketConnection = (server) => {
   io.on("connection", (socket) => {
     console.info(`Client connected [id=${socket.id}]`);
     socket.join(socket.request._query.id);
-    socket.on("disconnect", () => {
-      console.info(`Client disconnected [id=${socket.id}]`);
-    });
 
-    socket.on("send-nickname", function (nickname) {
-      socket.nickname = nickname;
-      users.push(socket.nickname);
-      console.info("users", users);
-      socket.emit("login", {
+    socket.on("send-username", function (username) {
+      socket.username = username;
+      users.push({ id: socket.id, username: socket.username });
+      io.to(socket.id).emit("login", {
         id: socket.id,
+        username,
         total: users.length,
-        users: users,
+        users,
       });
       socket.broadcast.emit("user-joined", {
-        username: socket.nickname,
+        username,
         total: users.length,
-        users: users,
+        users,
       });
     });
 
     socket.on("new-message", (data) => {
-      socket.broadcast.emit("new-message", {
+      io.emit("new-message", {
         username: socket.username,
         dateTime: data.dateTime,
         message: data.message,
@@ -54,9 +50,13 @@ const socketConnection = (server) => {
     });
 
     socket.on("disconnect", () => {
-      users.splice(users.indexOf({ nickname: socket.nickname }), 1);
+      console.info(`Client disconnected [id=${socket.id}]`);
+      users.splice(
+        users.findIndex(({ username }) => username === socket.username),
+        1
+      );
       socket.broadcast.emit("user-left", {
-        username: socket.nickname,
+        username: socket.username,
         total: users.length,
         users: users,
       });
