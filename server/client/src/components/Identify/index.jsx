@@ -28,7 +28,7 @@ const Identify = () => {
     socket.on("login", (data) => {
       dispatch(initSocket(data));
     });
-  }, [dispatch]);
+  }, [socket, dispatch]);
 
   useEffect(() => {
     id && navigate("chat");

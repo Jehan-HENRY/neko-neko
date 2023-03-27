@@ -23,7 +23,13 @@ An in-depth paragraph about your project and overview of use.
 * How to run the program
 * Step-by-step bullets
 ```
-code blocks for commands
+docker-compose up -d
+
+docker exec -it server_backend bash
+    yarn start
+
+docker exec -it client_frontend bash 
+    yarn start
 ```
 
 ## Help

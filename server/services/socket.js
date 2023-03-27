@@ -43,8 +43,11 @@ const socketConnection = (server) => {
 
     socket.on("stop-typing", (target) => {
       target
-        ? io.to(target).emit("stop typing", { username: socket.username })
-        : socket.broadcast.emit("stop typing", {
+        ? io
+            .to(target)
+            .emit("stop-typing", { private: true, username: socket.username })
+        : socket.broadcast.emit("stop-typing", {
+            private: false,
             username: socket.username,
           });
     });
