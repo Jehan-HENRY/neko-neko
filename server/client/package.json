@@ -49,6 +49,6 @@
     "redux-devtools-extension": "^2.13.9",
     "tailwindcss": "^3.2.4"
   },
-  "proxy": "https://server_backend:4000",
+  "proxy": "http://server_backend:4000",
   "homepage": "."
 }

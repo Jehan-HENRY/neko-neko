@@ -3,6 +3,7 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   cors = require("cors"),
   helmet = require("helmet"),
+  http = require("http"),
   https = require("https"),
   options = require("./cert"),
   port = process.env.NODE_PORT || 4000,
@@ -36,10 +37,11 @@ app.use((_, res) => {
   res.status(404);
 });
 
-const httpsServer = https.createServer(options, app);
+const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(options, app);
 
-socketConnection(httpsServer);
+socketConnection(httpServer);
 
-httpsServer.listen(port, () => {
+httpServer.listen(port, "0.0.0.0", () => {
   console.log(`We're mixing on port: ${port}`);
 });
