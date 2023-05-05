@@ -37,7 +37,7 @@ const Identify = () => {
   return (
     <>
       <img src={title} alt="title" className="mx-auto mb-10 w-60" />
-      <form className="w-1/4 mx-auto" onSubmit={handleSubmit}>
+      <form className="w-3/4 lg:w-1/4 mx-auto" onSubmit={handleSubmit}>
         <div className="mb-6">
           <label
             htmlFor="name"

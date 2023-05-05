@@ -180,7 +180,7 @@ const Chat = () => {
             id="message"
             autoFocus
             autoComplete="off"
-            className={`absolute inset-x-0 mx-48 bottom-2.5 p-2.5 rounded-lg text-md text-gray-900 bg-slate-100 border border-gray-300 transition-all ease-in-out duration-500${
+            className={`absolute inset-x-0 mx-3 lg:mx-48 bottom-2.5 p-2.5 rounded-lg text-md text-gray-900 bg-slate-100 border border-gray-300 transition-all ease-in-out duration-500${
               isOpen ? " custom-margin-left" : ""
             }`}
             placeholder="Dis des trucs..."

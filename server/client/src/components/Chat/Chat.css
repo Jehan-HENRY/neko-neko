@@ -48,3 +48,13 @@
 .custom-margin-left {
   margin-left: 21rem;
 }
+
+@media only screen and (max-width: 600px) {
+  .hr-lines:before {
+    width: 30px;
+  }
+
+  .hr-lines:after {
+    width: 30px;
+  }
+}
